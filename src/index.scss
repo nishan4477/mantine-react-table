@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+    color: white;
+}
+
+
+
+.btn,.btn--delete{
+    padding: 5px 15px;
+    border-radius: 5px;
+    background-color: white;
+    color: black;
+    text-align: center;
+    transition: all 0.5s ease;
+
+ &:hover{
+    transform: scale(1.02);
+ }
+}
+
+.btn--delete{
+    background-color: red;
+}
