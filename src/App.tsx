@@ -3,6 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage/HomePage";
 import InfiniteQuery from "./pages/InfiniteQuery/InfiniteQuery";
 import Table from "./pages/Table/Table";
+import MantineTable from "./pages/MantineTable/MantineTable";
+// import MantineTable from "./pages/MantineTable/MantineTable";
 
 const router = createBrowserRouter([
   {
@@ -24,9 +26,13 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/tables",
+    path: "/mantine-react-table",
     element: <Table />,
   },
+  {
+    path: "/mantine-table",
+    element:<MantineTable />
+  }
 ]);
 const App = () => {
   return (

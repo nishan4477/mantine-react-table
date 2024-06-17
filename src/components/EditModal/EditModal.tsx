@@ -112,7 +112,7 @@ const EditModal = () => {
 
   function handleAdd(val: editVal) {
     const newProduct = {
-      id: Math.ceil(Math.random() * 10000),
+      id: Date.now(),
       ...val,
       total: val.quantity * val.price,
     };
@@ -133,7 +133,7 @@ const EditModal = () => {
         size="lg"
       >
         <form onSubmit={form.onSubmit(isOpenAddModal ? handleAdd : handleEdit)}>
-          <TextInput  
+          <TextInput
             className="mb-2"
             withAsterisk
             label="Product Name"
@@ -151,7 +151,7 @@ const EditModal = () => {
           />
           <NumberInput
             withAsterisk
-            label="Price"
+            label="Price (Rs.)"
             // description="Input description"
             // placeholder="Input placeholder"
             key={form.key("price")}

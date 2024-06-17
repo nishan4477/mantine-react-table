@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 
 import { products } from "../../data";
 import { useDisclosure } from "@mantine/hooks";
-import { Modal, Button } from "@mantine/core";
+import { Modal, Button, TextInput } from "@mantine/core";
 
 import {
   MantineReactTable,
@@ -13,6 +13,7 @@ import { Product } from "../../types";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { useTableStore } from "../../store/TableStore";
 import EditModal from "../../components/EditModal/EditModal";
+import { useDebouncedCallback } from "@mantine/hooks";
 
 const Table = () => {
   const [opened, handler] = useDisclosure(false);
@@ -25,8 +26,11 @@ const Table = () => {
     setEditProductId,
     setIsOpenEditModal,
     setIsOpenAddModal,
+    isSearched,
+    setIsSearched,
+    searchProduct,
+    setSearchProduct,
     // isOpenAddModal
-
 
     // isOpenEditModal
   ] = useTableStore((state) => [
@@ -37,11 +41,15 @@ const Table = () => {
     state.setEditProductId,
     state.setIsOpenEditModal,
     state.setIsOpenAddModal,
+    state.isSearched,
+    state.setIsSearched,
+    state.searchProduct,
+    state.setSearchProduct,
+
     // state.isOpenAddModal
 
     // state.isOpenEditModal
   ]);
-
 
   function handleDelete() {
     const temp = [...products];
@@ -61,7 +69,11 @@ const Table = () => {
       {
         accessorKey: "name",
         header: "Name",
+        filterVariant: "autocomplete",
+        filterFn: "contains",
         Cell: (info) => `${info.row.original.id}- ${info.row.original.name}`,
+        // columnFilterModeOptions: ['fuzzy', 'contains', 'startsWith'],
+        sortingFn: "textCaseSensitive",
       },
       {
         accessorKey: "quantity",
@@ -70,10 +82,58 @@ const Table = () => {
       {
         accessorKey: "price",
         header: "Price",
+        Cell: ({ cell }) =>
+          cell.getValue<number>().toLocaleString("en-NP", {
+            style: "currency",
+
+            currency: "NPR",
+          }),
+
+        filterVariant: "range-slider",
+
+        filterFn: "betweenInclusive", // default (or between)
+
+        mantineFilterRangeSliderProps: {
+          max: 1000, //custom max (as opposed to faceted max)
+
+          min: 1, //custom min (as opposed to faceted min)
+
+          step: 1,
+
+          label: (value) =>
+            value.toLocaleString("en-NP", {
+              style: "currency",
+              currency: "NPR",
+            }),
+        },
       },
       {
         accessorKey: "total",
         header: "Total",
+        Cell: ({ cell }) =>
+          cell.getValue<number>().toLocaleString("en-NP", {
+            style: "currency",
+
+            currency: "NPR",
+          }),
+
+        filterVariant: "range-slider",
+
+        filterFn: "betweenInclusive", // default (or between)
+
+        mantineFilterRangeSliderProps: {
+          max: 100000, //custom max (as opposed to faceted max)
+
+          min: 100, //custom min (as opposed to faceted min)
+
+          step: 1,
+          label: (value) =>
+            value.toLocaleString("en-NP", {
+              style: "currency",
+
+              currency: "NPR",
+            }),
+        },
       },
       {
         id: "actions",
@@ -103,26 +163,79 @@ const Table = () => {
     []
   );
 
+  const handleOnchangeSearch = useDebouncedCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value.trim();
+      if (value === "") {
+        setSearchProduct(products);
+      }
+      const filterProducts = products.filter((product) => {
+        return product.name.toLowerCase().includes(value.toLowerCase());
+      });
+
+      setSearchProduct(filterProducts);
+    },
+    500
+  );
+
+  function handleManualSearch(val: string | undefined) {
+    debugger;
+    if (val === undefined) {
+      setSearchProduct(products);
+      return;
+    }
+    const value = val.trim();
+    if (value === "") {
+      setSearchProduct(products);
+      return;
+    }
+    const filterProducts = products.filter((product) => {
+      return product.name.toLowerCase().includes(value.toLowerCase());
+    });
+
+    setSearchProduct(filterProducts);
+  }
+
   const table = useMantineReactTable({
     columns,
-    data: products, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+    data: searchProduct,
+
+    // data: isSearched ? searchProduct : products, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+    // enableGlobalFilter: false,
+    // manualFiltering: true,
+    enableFilterMatchHighlighting: true,
+    // globalFilterFn: "contains",
+    // manualFiltering: true,
+    // globalFilterModeOptions: ["contains", "startsWith", "endsWith"],
+    onGlobalFilterChange: handleManualSearch,
+    // enableEditing: true,
+    // onEditingRowSave: handleSaveRow,
+    initialState: {
+      showColumnFilters: true,
+    },
   });
+
   return (
     <div>
-        <div className="flex justify-end">
+      <div className="flex justify-end items-center gap-6">
+        {/* <TextInput
+          placeholder="Search"
+          onChange={handleOnchangeSearch}
+          onClick={() => setIsSearched(true)}
+          onBlur={() => setIsSearched(false)}
+        /> */}
         <Button
-        className="mr-4 my-4"
-        color="blue"
-        onClick={() => {
-          setIsOpenAddModal(true);
-          setIsOpenEditModal(true);
-        }}
-      >
-        Add Product
-      </Button>
+          className="mr-4 my-4"
+          color="blue"
+          onClick={() => {
+            setIsOpenAddModal(true);
+            setIsOpenEditModal(true);
+          }}
+        >
+          Add Product
+        </Button>
+      </div>
 
-        </div>
-  
       <Modal
         closeOnClickOutside
         centered
