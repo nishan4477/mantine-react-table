@@ -154,7 +154,7 @@ const MantineTable = () => {
       </div>
 
       <ScrollArea
-        h={400}
+        h={600}
         onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
         className="mt-4"
         scrollbarSize="8px"
