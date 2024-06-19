@@ -23,7 +23,7 @@ const UserSchema = z
     username: z.string().min(1, { message: "Username is required" }),
     password: z.string(),
     confirmPassword: z.string(),
-    avatar: z.instanceof(File),
+    avatar: z.instanceof(File).nullable(),
     coverImage: z.instanceof(File).nullish(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -70,6 +70,10 @@ const Register = () => {
   });
 
   function handleSubmit(values: TUser) {
+    if (!values.avatar) {
+      form.setFieldError("avatar", "Avatar is required");
+      return;
+    }
     const formData = new FormData();
     formData.append("fullName", values.fullName);
     formData.append("email", values.email);
