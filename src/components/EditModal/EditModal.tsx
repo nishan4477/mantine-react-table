@@ -53,11 +53,7 @@ const EditModal = () => {
       });
     }
     if (isOpenAddModal) {
-      form.setValues({
-        name: "",
-        quantity: 0,
-        price: 0,
-      });
+      form.reset();
     }
   }, [editProductId, isOpenAddModal]);
   const form = useForm({

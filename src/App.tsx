@@ -5,15 +5,37 @@ import InfiniteQuery from "./pages/InfiniteQuery/InfiniteQuery";
 import Table from "./pages/Table/Table";
 import MantineTable from "./pages/MantineTable/MantineTable";
 // import MantineTable from "./pages/MantineTable/MantineTable";
+import { AppShell, Burger } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import Login from "./pages/LoginPage/Login";
+import Register from "./pages/RegistrationPage/Register";
+import RouteGaurd from "./components/RouteGaurd";
+import { Toaster } from "react-hot-toast";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/home",
+    element: (
+      <RouteGaurd>
+        <HomePage />
+      </RouteGaurd>
+    ),
   },
   {
     path: "/pokemon",
-    element: <InfiniteQuery />,
+    element: (
+      <RouteGaurd>
+        <InfiniteQuery />
+      </RouteGaurd>
+    ),
   },
   {
     path: "*",
@@ -31,13 +53,14 @@ const router = createBrowserRouter([
   },
   {
     path: "/mantine-table",
-    element:<MantineTable />
-  }
+    element: <MantineTable />,
+  },
 ]);
 const App = () => {
   return (
     <>
       <RouterProvider router={router} />
+      <Toaster />;
     </>
   );
 };

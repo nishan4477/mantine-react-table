@@ -179,7 +179,6 @@ const Table = () => {
   );
 
   function handleManualSearch(val: string | undefined) {
-    debugger;
     if (val === undefined) {
       setSearchProduct(products);
       return;

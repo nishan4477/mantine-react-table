@@ -1,14 +1,22 @@
+// @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body{
+:root{
+    inset: 0;
+}:root {
+    inset: 0;
+}
+body {
     color: white;
+    // font-family: "Nunito Sans", sans-serif!important;
 }
 
 
 
-.btn,.btn--delete{
+.btn,
+.btn--delete {
     padding: 5px 15px;
     border-radius: 5px;
     background-color: white;
@@ -16,13 +24,11 @@ body{
     text-align: center;
     transition: all 0.5s ease;
 
- &:hover{
-    transform: scale(1.02);
- }
+    &:hover {
+        transform: scale(1.02);
+    }
 }
 
-.btn--delete{
+.btn--delete {
     background-color: red;
 }
-
-

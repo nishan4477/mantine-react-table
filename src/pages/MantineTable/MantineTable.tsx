@@ -73,7 +73,7 @@ const MantineTable = () => {
 
   function handleSortName() {
     // if (isSortName) {
-    debugger;
+
     let temp = [...products];
     if (sortNameOrder === "asc") {
       temp.sort((a, b) => a.name.localeCompare(b.name));
@@ -133,9 +133,11 @@ const MantineTable = () => {
     <div className="mantine-table px-4 py-4  w-full h-screen">
       <div className="relative">
         <TextInput
-        styles={{input:{
-          paddingLeft:"30px"
-        }}}
+          styles={{
+            input: {
+              paddingLeft: "30px",
+            },
+          }}
           className="w-64"
           placeholder="Search by products name"
           onChange={handleOnchangeSearch}
