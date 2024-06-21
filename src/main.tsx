@@ -30,5 +30,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </MantineProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

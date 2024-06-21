@@ -1,59 +1,37 @@
-import React, { useEffect, useState } from "react";
 import { ScrollArea, Select, Table, TextInput } from "@mantine/core";
-import clsx from "clsx";
-import classes from "./MantineTable.module.scss";
 import { useDebouncedCallback } from "@mantine/hooks";
+import clsx from "clsx";
+import React, { useEffect, useState } from "react";
 import { Search } from "tabler-icons-react";
-
-import { products } from "../../data";
+import classes from "./MantineTable.module.scss";
+import { Pagination } from "@mantine/core";
+import SortIcons from "../../components/SortIcons/SortIcons";
 import { useTableStore } from "../../store/TableStore";
-import { ArrowsSort } from "tabler-icons-react";
-import { SortAscending } from "tabler-icons-react";
-import { SortDescending } from "tabler-icons-react";
-import { Pagination, Text } from "@mantine/core";
 
 const MantineTable = () => {
-  const [scrolled, setScrolled] = useState<boolean>(false);
-  const [activePage, setPage] = useState<number>(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(10);
+  const [scrolled, setScrolled] = useState(false);
+  const [activePage, setPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [
     searchProduct,
     setSearchProduct,
     products,
-    setProducts,
     isSearched,
     setIsSearched,
-    isSortName,
-    setIsSortName,
-    sortNameOrder,
-    setSortNameOrder,
-    sortedProductName,
-    setSortedProductName,
-    isSortTotal,
-    setIsSortTotal,
-    sortedProductTotal,
-    setSortedProductTotal,
-    sortTotalOrder,
-    setSortTotalOrder,
+    sort,
+    setSort,
+    sortedProducts,
+    setSortedProducts,
   ] = useTableStore((state) => [
     state.searchProduct,
     state.setSearchProduct,
     state.products,
-    state.setProducts,
     state.isSearched,
     state.setIsSearched,
-    state.isSortName,
-    state.setIsSortName,
-    state.sortNameOrder,
-    state.setSortNameOrder,
-    state.sortedProductName,
-    state.setSortedProductName,
-    state.isSortTotal,
-    state.setIsSortTotal,
-    state.sortedProductTotal,
-    state.setSortedProductTotal,
-    state.sortTotalOrder,
-    state.setSortTotalOrder,
+    state.sort,
+    state.setSort,
+    state.sortedProducts,
+    state.setSortedProducts,
   ]);
 
   const handleOnchangeSearch = useDebouncedCallback(
@@ -61,63 +39,53 @@ const MantineTable = () => {
       const value = e.target.value.trim();
       if (value === "") {
         setSearchProduct(products);
+        return;
       }
       const filterProducts = products.filter((product) => {
         return product.name.toLowerCase().includes(value.toLowerCase());
       });
-
       setSearchProduct(filterProducts);
     },
-    500
+    500,
   );
 
-  function handleSortName() {
-    // if (isSortName) {
-
-    let temp = [...products];
-    if (sortNameOrder === "asc") {
-      temp.sort((a, b) => a.name.localeCompare(b.name));
-    } else {
-      temp.sort((a, b) => b.name.localeCompare(a.name));
+  const handleSort = () => {
+    const temp = [...products];
+    if (sort.name === "name") {
+      if (sort.type === "asc") {
+        temp.sort((a, b) => a.name.localeCompare(b.name));
+      } else {
+        temp.sort((a, b) => b.name.localeCompare(a.name));
+      }
+      setSortedProducts(temp);
     }
-    setSortedProductName(temp);
-    // }
-  }
 
-  function handleSortTotal() {
-    let temp = [...products];
-    if (sortTotalOrder === "asc") {
-      temp.sort((a, b) => a.total - b.total);
-    } else {
-      temp.sort((a, b) => b.total - a.total);
+    if (sort.name === "total") {
+      if (sort.type === "asc") {
+        temp.sort((a, b) => a.total - b.total);
+      } else {
+        temp.sort((a, b) => b.total - a.total);
+      }
+      setSortedProducts(temp);
     }
-    setSortedProductTotal(temp);
-  }
+  };
 
   useEffect(() => {
-    if (isSortName) {
-      handleSortName();
+    if (sort.name !== null) {
+      handleSort();
     }
-  }, [isSortName, sortNameOrder]);
+  }, [sort.name, sort.type]);
 
-  useEffect(() => {
-    if (isSortTotal) {
-      handleSortTotal();
-    }
-  }, [isSortTotal, sortTotalOrder]);
-
-  const tableData = isSortTotal
-    ? sortedProductTotal
-    : isSortName
-    ? sortedProductName
-    : isSearched
+  const tableData = isSearched
     ? searchProduct
-    : products;
+    : sort.name === null
+      ? products
+      : sortedProducts;
 
   const totalPages = Math.ceil(tableData.length / itemsPerPage);
   const currentPageData = tableData?.slice(
     (activePage - 1) * itemsPerPage,
-    activePage * itemsPerPage
+    activePage * itemsPerPage,
   );
 
   const rows = currentPageData.map((product) => (
@@ -142,10 +110,7 @@ const MantineTable = () => {
           placeholder="Search by products name"
           onChange={handleOnchangeSearch}
           onClick={() => {
-            setIsSortName(false);
-            setIsSortTotal(false);
-            setSortNameOrder("asc");
-            setSortTotalOrder("asc");
+            setSort(null, null);
             setIsSearched(true);
           }}
           onBlur={() => setIsSearched(false)}
@@ -177,69 +142,13 @@ const MantineTable = () => {
             <Table.Tr>
               <Table.Th className="flex items-center gap-2 cursor-pointer">
                 Name
-                {isSortName ? (
-                  sortNameOrder === "asc" ? (
-                    <SortAscending
-                      size={24}
-                      strokeWidth={1.5}
-                      color={"black"}
-                      onClick={() => {
-                        setSortNameOrder("desc");
-                      }}
-                    />
-                  ) : (
-                    <SortDescending
-                      size={24}
-                      strokeWidth={1.5}
-                      color={"black"}
-                      onClick={() => {
-                        setIsSortName(false);
-                        setSortNameOrder("asc");
-                      }}
-                    />
-                  )
-                ) : (
-                  <ArrowsSort
-                    size={24}
-                    strokeWidth={1.5}
-                    color={"black"}
-                    onClick={() => setIsSortName(true)}
-                  />
-                )}
+                <SortIcons name="name" />
               </Table.Th>
               <Table.Th>Quantity</Table.Th>
               <Table.Th>Price</Table.Th>
               <Table.Th className="flex items-center gap-2 cursor-pointer">
                 Total
-                {isSortTotal ? (
-                  sortTotalOrder === "asc" ? (
-                    <SortAscending
-                      size={24}
-                      strokeWidth={1.5}
-                      color={"black"}
-                      onClick={() => {
-                        setSortTotalOrder("desc");
-                      }}
-                    />
-                  ) : (
-                    <SortDescending
-                      size={24}
-                      strokeWidth={1.5}
-                      color={"black"}
-                      onClick={() => {
-                        setIsSortTotal(false);
-                        setSortTotalOrder("asc");
-                      }}
-                    />
-                  )
-                ) : (
-                  <ArrowsSort
-                    size={24}
-                    strokeWidth={1.5}
-                    color={"black"}
-                    onClick={() => setIsSortTotal(true)}
-                  />
-                )}
+                <SortIcons name="total" />
               </Table.Th>
             </Table.Tr>
           </Table.Thead>

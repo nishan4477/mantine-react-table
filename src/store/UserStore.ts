@@ -37,6 +37,6 @@ export const userUserData = create<UserState>()(
     {
       name: "user-data", // unique name
       getStorage: () => localStorage, // (optional) by default, 'localStorage' is used
-    }
-  )
+    },
+  ),
 );

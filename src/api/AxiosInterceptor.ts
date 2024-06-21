@@ -1,5 +1,5 @@
 import axios from "axios";
-const domain:string = import.meta.env.BASE_URL
+const domain: string = import.meta.env.BASE_URL;
 // import { useLocalStorage } from "@mantine/hooks";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,7 +10,7 @@ const AxiosInstance = axios.create({
 
 AxiosInstance.interceptors.request.use(
   async (config) => {
-    let token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -19,7 +19,7 @@ AxiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 AxiosInstance.interceptors.response.use(
@@ -30,7 +30,7 @@ AxiosInstance.interceptors.response.use(
   (error) => {
     toast.error(`Request failed: ${error.message}`);
     return Promise.reject(error);
-  }
+  },
 );
 
 export default AxiosInstance;

@@ -1,20 +1,18 @@
-import React from "react";
-import registrationImg from "../../assets/registration.jpg";
 import {
   Button,
-  PasswordInput,
-  TextInput,
   Fieldset,
   FileInput,
+  PasswordInput,
+  TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { z } from "zod";
-import { zodResolver } from "mantine-form-zod-resolver";
 import { useMutation } from "@tanstack/react-query";
-import { postRegistration } from "../../api/postApi";
-// import { Register as IRegister } from "../../api/postApi";
+import { zodResolver } from "mantine-form-zod-resolver";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { postRegistration } from "../../api/postApi";
+import registrationImg from "../../assets/registration.jpg";
 
 const UserSchema = z
   .object({
@@ -34,7 +32,7 @@ const UserSchema = z
 type TUser = z.infer<typeof UserSchema>;
 const Register = () => {
   const navigate = useNavigate();
-  const form = useForm({
+  const form = useForm<TUser>({
     mode: "uncontrolled",
     initialValues: {
       fullName: "",
@@ -48,10 +46,9 @@ const Register = () => {
     validate: zodResolver(UserSchema),
   });
 
-  const { mutate, status, error, isError } = useMutation({
+  const { mutate, status } = useMutation({
     mutationFn: postRegistration,
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
       toast.success("New user register successful!", {
         position: "top-right",
       });
@@ -61,8 +58,6 @@ const Register = () => {
     },
     onError: (err) => {
       console.log("error", err);
-      // toastError();
-
       toast.error("Login Failed!", {
         position: "top-right",
       });
@@ -83,100 +78,93 @@ const Register = () => {
     if (values.coverImage) {
       formData.append("coverImage", values.coverImage);
     }
-    console.log(formData);
     mutate(formData);
   }
 
   return (
-    <section className="login ">
-      <div className="flex w-full h-screen ">
-        <div className="basis-1/2 w-full min-h-full py-15">
-          <h2 className="text-[52px] text-center py-4 ">Register Here</h2>
-          <div className="mx-auto w-1/2">
-            <form onSubmit={form.onSubmit(handleSubmit)}>
-              <Fieldset
-                styles={{
-                  legend: {
-                    fontWeight: 700,
-                  },
-                }}
-                legend="Personal Information"
-              >
-                <TextInput
-                  label="Full Name"
-                  withAsterisk
-                  className="pb-4 "
-                  placeholder="Enter your FullName"
-                  key={form.key("fullName")}
-                  {...form.getInputProps("fullName")}
-                />
-                <TextInput
-                  label="Username"
-                  withAsterisk
-                  className="pb-4 "
-                  placeholder="Enter your username"
-                  key={form.key("username")}
-                  {...form.getInputProps("username")}
-                />
-                <TextInput
-                  label="Email"
-                  withAsterisk
-                  className="pb-4 "
-                  placeholder="Enter your email"
-                  key={form.key("email")}
-                  {...form.getInputProps("email")}
-                />
-                <PasswordInput
-                  label="Password"
-                  withAsterisk
-                  className="pb-4"
-                  placeholder="Enter your password"
-                  key={form.key("password")}
-                  {...form.getInputProps("password")}
-                />
-                <PasswordInput
-                  withAsterisk
-                  label="Confirm Password"
-                  className="pb-4"
-                  placeholder="Re-enter your password"
-                  key={form.key("confirmPassword")}
-                  {...form.getInputProps("confirmPassword")}
-                />
-                <FileInput
-                  label="Select your avatar"
-                  withAsterisk
-                  placeholder="Avatar"
-                  className="pb-4"
-                  key={form.key("avatar")}
-                  {...form.getInputProps("avatar")}
-                />
+    <section className="flex w-full h-screen ">
+      <div className="basis-1/2 w-full min-h-full">
+        <h2 className="text-[52px] text-center py-4 ">Register Here</h2>
+        <div className="mx-auto w-1/2">
+          <form onSubmit={form.onSubmit(handleSubmit)}>
+            <Fieldset
+              styles={{
+                legend: {
+                  fontWeight: 700,
+                },
+              }}
+              legend="Personal Information"
+            >
+              <TextInput
+                label="Full Name"
+                withAsterisk
+                className="pb-4 "
+                placeholder="Enter your FullName"
+                key={form.key("fullName")}
+                {...form.getInputProps("fullName")}
+              />
+              <TextInput
+                label="Username"
+                withAsterisk
+                className="pb-4 "
+                placeholder="Enter your username"
+                key={form.key("username")}
+                {...form.getInputProps("username")}
+              />
+              <TextInput
+                label="Email"
+                withAsterisk
+                className="pb-4 "
+                placeholder="Enter your email"
+                key={form.key("email")}
+                {...form.getInputProps("email")}
+              />
+              <PasswordInput
+                label="Password"
+                withAsterisk
+                className="pb-4"
+                placeholder="Enter your password"
+                key={form.key("password")}
+                {...form.getInputProps("password")}
+              />
+              <PasswordInput
+                withAsterisk
+                label="Confirm Password"
+                className="pb-4"
+                placeholder="Re-enter your password"
+                key={form.key("confirmPassword")}
+                {...form.getInputProps("confirmPassword")}
+              />
+              <FileInput
+                label="Select your avatar"
+                withAsterisk
+                placeholder="Avatar"
+                className="pb-4"
+                key={form.key("avatar")}
+                {...form.getInputProps("avatar")}
+              />
 
-                <FileInput
-                  label="Select your cover photo"
-                  placeholder="Cover photo"
-                  className="pb-4"
-                  key={form.key("coverImage")}
-                  {...form.getInputProps("coverImage")}
-                />
-                <Button
-                  disabled={status === "pending"}
-                  type="submit"
-                  variant="filled"
-                >
-                  {status === "pending" ? "Registering" : "Register Now"}
-                </Button>
-              </Fieldset>
-            </form>
-          </div>
+              <FileInput
+                label="Select your cover photo"
+                placeholder="Cover photo"
+                className="pb-4"
+                key={form.key("coverImage")}
+                {...form.getInputProps("coverImage")}
+              />
+              <Button
+                disabled={status === "pending"}
+                type="submit"
+                variant="filled"
+              >
+                {status === "pending" ? "Registering" : "Register Now"}
+              </Button>
+            </Fieldset>
+          </form>
         </div>
-        <figure className="basis-1/2 w-full h-full overflow-hidden  ">
-          <img
-            className="brightness-75"
-            src={registrationImg}
-            alt="loginImage"
-          />
-        </figure>
       </div>
+      <figure className="basis-1/2 w-full h-full overflow-hidden  ">
+        <img className="brightness-75" src={registrationImg} alt="loginImage" />
+      </figure>
     </section>
   );
 };

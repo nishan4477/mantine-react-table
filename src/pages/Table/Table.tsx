@@ -1,9 +1,6 @@
-import React, { useState, useMemo } from "react";
-
-import { products } from "../../data";
+import React, { useMemo } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import { Modal, Button, TextInput } from "@mantine/core";
-
+import { Modal, Button } from "@mantine/core";
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -13,7 +10,6 @@ import { Product } from "../../types";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { useTableStore } from "../../store/TableStore";
 import EditModal from "../../components/EditModal/EditModal";
-import { useDebouncedCallback } from "@mantine/hooks";
 
 const Table = () => {
   const [opened, handler] = useDisclosure(false);
@@ -26,13 +22,8 @@ const Table = () => {
     setEditProductId,
     setIsOpenEditModal,
     setIsOpenAddModal,
-    isSearched,
-    setIsSearched,
     searchProduct,
     setSearchProduct,
-    // isOpenAddModal
-
-    // isOpenEditModal
   ] = useTableStore((state) => [
     state.products,
     state.setProducts,
@@ -41,20 +32,14 @@ const Table = () => {
     state.setEditProductId,
     state.setIsOpenEditModal,
     state.setIsOpenAddModal,
-    state.isSearched,
-    state.setIsSearched,
     state.searchProduct,
     state.setSearchProduct,
-
-    // state.isOpenAddModal
-
-    // state.isOpenEditModal
   ]);
 
   function handleDelete() {
     const temp = [...products];
     const filterdTemp = temp.filter(
-      (product) => product.id !== deleteProductId
+      (product) => product.id !== deleteProductId,
     );
     setProducts(filterdTemp);
     handler.close();
@@ -160,23 +145,23 @@ const Table = () => {
         ),
       },
     ],
-    []
+    [],
   );
 
-  const handleOnchangeSearch = useDebouncedCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value.trim();
-      if (value === "") {
-        setSearchProduct(products);
-      }
-      const filterProducts = products.filter((product) => {
-        return product.name.toLowerCase().includes(value.toLowerCase());
-      });
+  // const handleOnchangeSearch = useDebouncedCallback(
+  //   (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     const value = e.target.value.trim();
+  //     if (value === "") {
+  //       setSearchProduct(products);
+  //     }
+  //     const filterProducts = products.filter((product) => {
+  //       return product.name.toLowerCase().includes(value.toLowerCase());
+  //     });
 
-      setSearchProduct(filterProducts);
-    },
-    500
-  );
+  //     setSearchProduct(filterProducts);
+  //   },
+  //   500
+  // );
 
   function handleManualSearch(val: string | undefined) {
     if (val === undefined) {

@@ -1,10 +1,9 @@
-import { set } from "zod";
 import { create } from "zustand";
-import { Product } from "../types";
 import { products } from "../data";
+import { Product } from "../types";
 
 interface ProductStore {
-  products: Product[] | [];
+  products: Product[];
   setProducts: (products: Product[]) => void;
   deleteProductId: number | null;
   setDeleteProductId: (id: number | null) => void;
@@ -18,18 +17,11 @@ interface ProductStore {
   setIsSearched: (isSearched: boolean) => void;
   searchProduct: Product[] | [];
   setSearchProduct: (products: Product[]) => void;
-  isSortName: boolean;
-  setIsSortName: (isSort: boolean) => void;
-  sortNameOrder: "asc" | "desc";
-  setSortNameOrder: (order: "asc" | "desc") => void;
-  sortedProductName: Product[] | [];
-  setSortedProductName: (products: Product[]) => void;
-  isSortTotal: boolean;
-  setIsSortTotal: (isSort: boolean) => void;
-  sortedProductTotal: Product[] | [];
-  setSortedProductTotal: (products: Product[]) => void;
-  sortTotalOrder: "asc" | "desc";
-  setSortTotalOrder: (order: "asc" | "desc") => void;
+
+  sort: { name: null | "name" | "total"; type: null | "asc" | "desc" };
+  setSort: (name: null | "name" | "total", type: null | "asc" | "desc") => void;
+  sortedProducts: Product[];
+  setSortedProducts: (sortProducts: Product[]) => void;
 }
 
 export const useTableStore = create<ProductStore>()((set) => ({
@@ -52,20 +44,10 @@ export const useTableStore = create<ProductStore>()((set) => ({
   searchProduct: products,
   setSearchProduct: (products: Product[]) =>
     set(() => ({ searchProduct: products })),
-  isSortName: false,
-  setIsSortName: (isSort: boolean) => set(() => ({ isSortName: isSort })),
-  sortNameOrder: "asc",
-  setSortNameOrder: (order: "asc" | "desc") =>
-    set(() => ({ sortNameOrder: order })),
-  sortedProductName: products,
-  setSortedProductName: (products: Product[]) =>
-    set(() => ({ sortedProductName: products })),
-  isSortTotal: false,
-  setIsSortTotal: (isSort: boolean) => set(() => ({ isSortTotal: isSort })),
-  sortedProductTotal: products,
-  setSortedProductTotal: (products: Product[]) =>
-    set(() => ({ sortedProductTotal: products })),
-  sortTotalOrder: "asc",
-  setSortTotalOrder: (order: "asc" | "desc") =>
-    set(() => ({ sortTotalOrder: order })),
+  sort: { name: null, type: null },
+  setSort: (name: null | "name" | "total", type: null | "asc" | "desc") =>
+    set(() => ({ sort: { name: name, type: type } })),
+  sortedProducts: products,
+  setSortedProducts: (sortProducts: Product[]) =>
+    set(() => ({ sortedProducts: sortProducts })),
 }));

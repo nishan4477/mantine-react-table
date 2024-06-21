@@ -35,13 +35,12 @@ const EditModal = () => {
   function close() {
     setIsOpenEditModal(false);
     setIsOpenAddModal(false);
-    // form.reset
   }
 
   useEffect(() => {
     if (editProductId && !isOpenAddModal) {
       const product: Product | undefined = products.find(
-        (product: Product) => product.id === editProductId
+        (product: Product) => product.id === editProductId,
       );
       if (!product) {
         return;
@@ -56,6 +55,7 @@ const EditModal = () => {
       form.reset();
     }
   }, [editProductId, isOpenAddModal]);
+
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -95,7 +95,7 @@ const EditModal = () => {
       alert("Product not found");
       return;
     }
-    let temp = [...products];
+    const temp = [...products];
     temp.splice(index, 1, updatedProduct);
 
     setProducts(temp);
